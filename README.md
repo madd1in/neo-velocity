@@ -54,6 +54,12 @@ and time-based wall drag with impact-scaled damage.
 and rubber-band slightly; grid start with countdown, lap times, best lap, live position,
 minimap, and a results table.
 
+**Racing craft** — launch strips throw you into a real air phase (gravity, reduced steering
+authority, pitch with vertical speed, a hard-landing penalty and no wall clamp while high),
+slipstreaming behind a rival within ~58 units feeds you up to 11 % more speed, and holding the
+throttle in the last half second of the countdown gives a rocket start — too early and the
+engine misfires.
+
 **F-Zero mechanics** — a power bar doubles as health and boost fuel: scraping the rails drains
 it, hitting one hard costs a chunk, zero power destroys the machine (explosion, respawn at 42 %).
 The pit strip recharges you, dash plates fire you forward, and boost costs 20 power.
@@ -71,8 +77,9 @@ weaker GPUs.
 playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
 `MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
 
-**Look** — condensed-gothic type, crawl-yellow accents and a tilted title card; the in-race HUD
-keeps its neon.
+**Look** — an opening crawl on first load (skippable, once per session), condensed-gothic type,
+crawl-yellow accents, a tilted title card and holographic briefing panels with segmented stat
+bars; the in-race HUD keeps its neon.
 
 **Records** are stored per track in `localStorage`, and every completed lap is shown with its
 delta against your standing record lap.
