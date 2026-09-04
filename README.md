@@ -59,13 +59,20 @@ it, hitting one hard costs a chunk, zero power destroys the machine (explosion, 
 The pit strip recharges you, dash plates fire you forward, and boost costs 20 power.
 Holding the air brake while sliding into a rival performs a side attack.
 
-**Presentation** — synthwave sky shader, neon rails, ring gates, procedural road texture,
-speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, and a fully
-procedural WebAudio engine (no audio assets) whose pitch tracks your speed.
+**Presentation** — a hand-rolled post chain (no addons): the scene renders into a multisampled
+target, a bright pass and two separable Gaussian blurs build the bloom, and the composite adds a
+speed-scaled radial smear of that glow, chromatic stretch, vignette, grain and gamma. Shadow
+mapping follows the player, and the rest is sky shaders, neon rails, ring gates, procedural road
+textures, speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, plus a
+fully procedural WebAudio engine whose pitch tracks your speed. `Q` drops post and shadows for
+weaker GPUs.
 
 **Soundtrack** — nine streamed mp3 tracks in `music/` play as a shuffled, self-advancing
 playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
 `MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
+
+**Look** — condensed-gothic type, crawl-yellow accents and a tilted title card; the in-race HUD
+keeps its neon.
 
 **Records** are stored per track in `localStorage`, and every completed lap is shown with its
 delta against your standing record lap.
