@@ -1971,7 +1971,7 @@ function announce(txt,col){
 var bgm=(function(){
   var el=new Audio();
   el.preload='none';el.loop=false;
-  var idx=0,dirI=0,fails=0,on=false,muted=false,VOL=0.55,dead=false;
+  var idx=0,dirI=0,fails=0,on=false,muted=false,VOL=0.55,dead=false,dirOK=false;
   function announce(){
     if(dead)return;
     elNow.textContent='\u266A  '+MUSIC[idx].t;
@@ -1986,10 +1986,11 @@ var bgm=(function(){
     if(pr&&pr['catch'])pr['catch'](function(){});
   }
   el.addEventListener('ended',function(){idx=(idx+1)%MUSIC.length;fails=0;play();announce();});
-  el.addEventListener('playing',function(){fails=0;});
+  el.addEventListener('playing',function(){fails=0;dirOK=true;});
   el.addEventListener('error',function(){
     if(!on||dead)return;
-    if(dirI+1<MUSIC_DIRS.length){dirI++;play();return;}   /* same track, other folder */
+    /* probe the alternate folder only until one track has actually played */
+    if(!dirOK&&dirI+1<MUSIC_DIRS.length){dirI++;play();return;}
     fails++;
     if(fails>=MUSIC.length){dead=true;elNow.classList.remove('on');return;}
     idx=(idx+1)%MUSIC.length;play();
