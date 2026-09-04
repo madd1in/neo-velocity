@@ -1180,7 +1180,7 @@ function makeTrail(color){
   g.setAttribute('position',new THREE.BufferAttribute(pos,3));
   g.setAttribute('color',new THREE.BufferAttribute(col,3));
   g.setIndex(idx);
-  var m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0.7,
+  var m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0.5,
     blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));
   m.frustumCulled=false;m.renderOrder=3;
   return {mesh:m,geo:g,pos:pos,col:col,hist:[],c:new THREE.Color(color)};
@@ -1192,11 +1192,11 @@ function trailWrite(t,boost){
   for(i=0;i<TRAIL_N;i++){
     k=h[Math.min(i,n-1)];
     f=1-i/TRAIL_N;
-    w=(boost?3.4:2.2)*f*f;
+    w=(boost?2.5:1.6)*f*f;
     a=i*6;b=a+3;
     t.pos[a]=k[0]-k[3]*w; t.pos[a+1]=k[1]-k[4]*w; t.pos[a+2]=k[2]-k[5]*w;
     t.pos[b]=k[0]+k[3]*w; t.pos[b+1]=k[1]+k[4]*w; t.pos[b+2]=k[2]+k[5]*w;
-    var e=f*f*(boost?1.6:1.0);
+    var e=f*f*(boost?1.5:0.85);
     t.col[a]=t.c.r*e;t.col[a+1]=t.c.g*e;t.col[a+2]=t.c.b*e;
     t.col[b]=t.c.r*e;t.col[b+1]=t.c.g*e;t.col[b+2]=t.c.b*e;
   }
