@@ -906,10 +906,10 @@ Racer.prototype.think=function(dt,leadProgress){
     var d=sDiff(r.s,this.s);
     if(d>0&&d<26&&Math.abs(r.x-this.x)<7){target+=(this.x>r.x?1:-1)*7;}
   }
-  var maxV=this.top*this.skill*(1-clamp(Math.abs(ac)*160,0,0.32));
+  var maxV=this.top*this.skill*(1-clamp(Math.abs(ac)*125,0,0.26));
   var band=clamp((leadProgress-this.progress())/2200,-0.10,DIFFS[diff].band);
   maxV*=(1+band);
-  if(o.surf===1){this.boost=0.6;maxV*=1.22;}
+  if(o.surf===1){this.boost=0.6;maxV*=1.30;}
   if(this.boost>0){this.boost-=dt;maxV*=1.12;}
   this.v=damp(this.v,maxV,1.6,dt);
 
@@ -1261,7 +1261,7 @@ function drawMap(){
    RACE FLOW
    ===================================================================== */
 var MODES=[{k:'gp',name:'GRAND PRIX'},{k:'single',name:'EINZELRENNEN'},{k:'ta',name:'TIME ATTACK'}];
-var DIFFS=[{name:'NOVICE',ai:0.93,band:0.16},{name:'STANDARD',ai:1.00,band:0.12},{name:'EXPERT',ai:1.06,band:0.09}];
+var DIFFS=[{name:'NOVICE',ai:0.92,band:0.10},{name:'STANDARD',ai:1.00,band:0.16},{name:'EXPERT',ai:1.09,band:0.22}];
 var POINTS=[10,8,6,4,2,1];
 var mode=0,diff=1,gpRace=0,gpPts={},gpTotal=null,recLapAtStart=null,ghostLapAtStart=null;
 var state='menu',raceTime=0,bestLap=null,countdown=0,countStep=-1,selected=0,selTrack=0,attractS=0;
