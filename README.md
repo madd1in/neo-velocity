@@ -39,7 +39,14 @@ handful of draw calls.
   sampled 20× per second and stored per circuit, so it comes back on your next session.
 
 **Difficulty** — Novice / Standard / Expert scale rival top speed and how hard they
-rubber-band back to you.
+rubber-band back to you, and every circuit can be raced in reverse (own records and ghost).
+
+**Rivals have characters** — clean drivers hold a tight line and rarely attack, aggressive ones
+wander wider, move across to block whoever sits behind them and spin-attack often, wild ones
+swing across the track and carry too much speed into corners.
+
+**Announcer** — a Web Speech voice calls the grid, the laps, the final lap, knockouts, low power
+and the result; it picks a German voice when the system has one. `V` toggles it.
 
 **Machines** — six craft with distinct top speed / acceleration / grip / boost stats and their
 own low-poly models: three arcade racers plus a twin-engine podracer (fastest, twitchiest), an
@@ -76,7 +83,10 @@ target, a bright pass and two separable Gaussian blurs build the bloom, and the 
 speed-scaled radial smear of that glow, chromatic stretch, vignette, grain and gamma. Shadow
 mapping follows the player, per-theme motes drift around the camera (desert dust, trench embers,
 forest fireflies), every machine drags an additive engine trail, speed lines streak past above
-~62 % of top speed, boosts and launches punch out a shockwave ring, and the rest is sky shaders, neon rails, ring gates, procedural road
+~62 % of top speed, boosts and launches punch out a shockwave ring, boosting warps the frame radially,
+explosions add a fireball, a screen-space sun flare fires when the star is in view, a light rig
+runs the countdown over the grid, pulses chase along the rails and reflect onto the road, every
+machine drops a contact shadow, and the finish cuts to an orbiting camera, and the rest is sky shaders, neon rails, ring gates, procedural road
 textures, speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, plus a
 fully procedural WebAudio engine whose pitch tracks your speed. `Q` drops post and shadows for
 weaker GPUs.
@@ -108,6 +118,7 @@ delta against your standing record lap.
 | `Q` | Quality toggle (device pixel ratio) |
 | `N` | Next music track |
 | `-` / `+` | Music volume |
+| `V` | Announcer on/off |
 | `M` | Mute everything |
 
 On touch devices: tap the left or right half to steer (throttle is automatic), both sides at
