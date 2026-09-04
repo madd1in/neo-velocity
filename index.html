@@ -54,6 +54,17 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
   text-shadow:0 0 34px rgba(90,210,255,.85)}
 #pausemsg.on{display:flex}
 #pausemsg span{font-size:10px;letter-spacing:.3em;color:#8fb6d8;text-shadow:none}
+#mirror{position:absolute;left:50%;transform:translateX(-50%);width:30%;aspect-ratio:3.2;
+  border:1px solid rgba(120,220,255,.35);box-shadow:0 0 18px rgba(60,180,255,.25);opacity:0;
+  transition:opacity .3s;pointer-events:none}
+#mirror.on{opacity:1}
+#mirror:after{content:'HECK';position:absolute;left:6px;bottom:-13px;font-size:8px;
+  letter-spacing:.26em;color:#7fd0ff;opacity:.7}
+#pithint{position:absolute;left:50%;transform:translateX(-50%);bottom:12%;opacity:0;
+  transition:opacity .25s;font-size:12px;font-weight:700;letter-spacing:.24em;
+  background:rgba(4,10,20,.72);border:1px solid rgba(120,220,255,.4);padding:5px 14px;color:#9fe9ff}
+#pithint.on{opacity:1}
+#pithint.urgent{border-color:#ff3b6b;color:#ff8aa8;animation:bl .6s steps(1) infinite}
 #kolog{position:absolute;top:14px;left:0;right:0;text-align:center;pointer-events:none;
   display:flex;flex-direction:column;align-items:center;gap:3px}
 #kolog div{font-size:12px;font-weight:700;letter-spacing:.20em;
@@ -193,6 +204,8 @@ td.p{color:#ffe81f;font-weight:700}
   </div>
   <div id="center"></div>
   <div id="laptoast"></div>
+  <div id="mirror"></div>
+  <div id="pithint"></div>
   <div id="kolog"></div>
   <div id="pausemsg">PAUSE<span>P / ESC = WEITER</span></div>
   <div id="nowplaying"></div>
@@ -217,7 +230,7 @@ td.p{color:#ffe81f;font-weight:700}
   <div class="keys">
     <span><b>W &uarr;</b>Gas</span><span><b>S &darr;</b>Bremse</span><span><b>A D &larr; &rarr;</b>Lenken</span>
     <span><b>SHIFT</b>Airbrake</span><span><b>LEER</b>Boost</span><span><b>E</b>Spin-Attacke</span><span><b>C</b>Kamera</span>
-    <span><b>P / ESC</b>Pause</span><span><b>R</b>Neustart</span><span><b>Q</b>Qualit&auml;t</span><span><b>N</b>N&auml;chster Track</span><span><b>- / +</b>Musik</span><span><b>V</b>Ansage</span><span><b>M</b>Sound</span>
+    <span><b>P / ESC</b>Pause</span><span><b>R</b>Neustart</span><span><b>Q</b>Qualit&auml;t</span><span><b>N</b>N&auml;chster Track</span><span><b>- / +</b>Musik</span><span><b>B</b>Heckansicht</span><span><b>V</b>Ansage</span><span><b>M</b>Sound</span>
   </div>
 </div>
 
@@ -370,19 +383,19 @@ scene.add(new THREE.Mesh(skyGeo,skyMat));
    TRACK — closed spline, arc-length sampled, auto-banked
    ===================================================================== */
 var TRACKS=[
- {name:'MUTE LOOP',traffic:0xbfe0ff,trafficO:0.60,haz:[[0.09,-9],[0.09,9],[0.40,0],[0.585,-8],[0.585,8],[0.775,4],[0.95,-6]],motes:{c:0x7fd8ff,o:0.40,s:1.4},jumps:[0.235,0.545,0.865],tag:'FLOWING',pts:26,base:900,width:31,
+ {name:'MUTE LOOP',pitSide:-1,traffic:0xbfe0ff,trafficO:0.60,haz:[[0.09,-9],[0.09,9],[0.40,0],[0.585,-8],[0.585,8],[0.775,4],[0.95,-6]],motes:{c:0x7fd8ff,o:0.40,s:1.4},jumps:[0.235,0.545,0.865],tag:'FLOWING',pts:26,base:900,width:31,
   r:[[3,275,0.40],[5,125,1.90],[2,-85,1.5708]],
   y:[[2,58,0.60],[5,26,0.00],[7,16,2.10]],
   wide:[[0.005,0.035,13],[0.52,0.045,6]],narrow:[[0.35,0.030,9],[0.72,0.028,8]],
   boosts:[0.155,0.305,0.47,0.63,0.80,0.925],pit:0.055,
   railA:0x26d9ff,railB:0xff33bf,deco:0x7a5bff,fog:0x0b0524,tint:0xffffff,grid:0x7a4bff},
- {name:'SERPENT VALLEY',traffic:0xc8ffe0,trafficO:0.45,haz:[[0.07,0],[0.33,-7],[0.33,7],[0.62,3],[0.90,-4],[0.90,6]],motes:{c:0x7fffc8,o:0.38,s:1.4},jumps:[0.175,0.505,0.795],tag:'TECHNICAL',pts:30,base:770,width:27,
+ {name:'SERPENT VALLEY',pitSide:1,traffic:0xc8ffe0,trafficO:0.45,haz:[[0.07,0],[0.33,-7],[0.33,7],[0.62,3],[0.90,-4],[0.90,6]],motes:{c:0x7fffc8,o:0.38,s:1.4},jumps:[0.175,0.505,0.795],tag:'TECHNICAL',pts:30,base:770,width:27,
   r:[[4,-205,0.90],[7,105,0.30],[2,140,2.20]],
   y:[[3,84,1.10],[6,34,0.40],[9,14,0.00]],
   wide:[[0.005,0.030,11]],narrow:[[0.22,0.026,7],[0.48,0.024,8],[0.78,0.026,7]],
   boosts:[0.12,0.27,0.41,0.58,0.71,0.88],pit:0.055,
   railA:0x3dffb0,railB:0xffc21f,deco:0x27d99a,fog:0x03160f,tint:0xc6ffe4,grid:0x2fd0a0},
- {name:'AURORA RUN',traffic:0xffd0e8,trafficO:0.55,haz:[[0.06,-11],[0.06,11],[0.31,0],[0.60,-9],[0.60,9],[0.86,5]],motes:{c:0xffc8e0,o:0.34,s:1.5},jumps:[0.155,0.445,0.735],tag:'HIGH SPEED',pts:24,base:1180,width:35,
+ {name:'AURORA RUN',pitSide:-1,traffic:0xffd0e8,trafficO:0.55,haz:[[0.06,-11],[0.06,11],[0.31,0],[0.60,-9],[0.60,9],[0.86,5]],motes:{c:0xffc8e0,o:0.34,s:1.5},jumps:[0.155,0.445,0.735],tag:'HIGH SPEED',pts:24,base:1180,width:35,
   r:[[2,320,1.20],[3,-145,0.20],[6,70,2.60]],
   y:[[1,44,0.00],[4,58,1.70],[8,12,0.90]],
   wide:[[0.005,0.045,14],[0.40,0.050,8]],narrow:[[0.63,0.030,10]],
@@ -390,7 +403,7 @@ var TRACKS=[
   railA:0x9ec4ff,railB:0xff5a6e,deco:0xff7a9c,fog:0x160617,tint:0xffdce8,grid:0xa06bff},
 
  /* --- outer rim circuits --- */
- {name:'TWIN SUNS CANYON',traffic:0xfff0d0,trafficO:0.30,haz:[[0.10,-8],[0.10,8],[0.38,0],[0.66,6],[0.90,-5]],motes:{c:0xffd9a0,o:0.55,s:1.9},jumps:[0.205,0.495,0.815],tag:'DESERT',pts:26,base:960,width:30,
+ {name:'TWIN SUNS CANYON',pitSide:1,traffic:0xfff0d0,trafficO:0.30,haz:[[0.10,-8],[0.10,8],[0.38,0],[0.66,6],[0.90,-5]],motes:{c:0xffd9a0,o:0.55,s:1.9},jumps:[0.205,0.495,0.815],tag:'DESERT',pts:26,base:960,width:30,
   r:[[2,-255,0.50],[5,150,1.10],[3,95,2.40]],
   y:[[2,72,0.20],[3,46,1.60],[6,20,0.00]],
   wide:[[0.005,0.035,12],[0.60,0.040,7]],narrow:[[0.28,0.028,8],[0.82,0.026,9]],
@@ -401,7 +414,7 @@ var TRACKS=[
        sunB:[-0.34,0.10,-0.93],sunBC:0xe89a4e,bands:0},
   light:{sky:0xf0cf9e,ground:0x6b4526,hemi:0.62,sun:0xffeccc,sunI:0.92,sunPos:[-800,700,-900],rim:0xffb066,rimI:0.28}},
 
- {name:'TRENCH RUN',traffic:0x9fc0ff,trafficO:0.35,haz:[[0.05,0],[0.29,-6],[0.29,6],[0.55,0],[0.80,-5],[0.80,5]],motes:{c:0xffb070,o:0.45,s:1.3},jumps:[0.165,0.425,0.665,0.915],tag:'CANYON WALLS',pts:22,base:1260,width:23,
+ {name:'TRENCH RUN',pitSide:-1,traffic:0x9fc0ff,trafficO:0.35,haz:[[0.05,0],[0.29,-6],[0.29,6],[0.55,0],[0.80,-5],[0.80,5]],motes:{c:0xffb070,o:0.45,s:1.3},jumps:[0.165,0.425,0.665,0.915],tag:'CANYON WALLS',pts:22,base:1260,width:23,
   r:[[1,185,0.00],[4,-95,1.30],[7,45,0.60]],
   y:[[2,26,0.40],[5,12,1.90]],
   wide:[[0.005,0.040,10]],narrow:[[0.33,0.030,4],[0.66,0.030,4]],
@@ -412,7 +425,7 @@ var TRACKS=[
        sunB:[0.0,1.0,0.0],sunBC:0x000000,bands:0},
   light:{sky:0xa8c4e8,ground:0x141820,hemi:0.55,sun:0xdce8ff,sunI:0.85,sunPos:[-400,1100,-300],rim:0xff6a3c,rimI:0.40}},
 
- {name:'FOREST MOON SPRINT',traffic:0xd8ffc0,trafficO:0.40,haz:[[0.08,-6],[0.08,6],[0.35,0],[0.63,4],[0.88,-4]],motes:{c:0xbfff9f,o:0.50,s:1.6},jumps:[0.185,0.475,0.755],tag:'SPEEDER RUN',pts:30,base:720,width:25,
+ {name:'FOREST MOON SPRINT',pitSide:1,traffic:0xd8ffc0,trafficO:0.40,haz:[[0.08,-6],[0.08,6],[0.35,0],[0.63,4],[0.88,-4]],motes:{c:0xbfff9f,o:0.50,s:1.6},jumps:[0.185,0.475,0.755],tag:'SPEEDER RUN',pts:30,base:720,width:25,
   r:[[5,-150,0.70],[8,72,2.00],[3,115,1.20]],
   y:[[4,58,0.90],[7,26,0.30]],
   wide:[[0.005,0.030,10]],narrow:[[0.20,0.024,6],[0.55,0.026,6],[0.85,0.024,6]],
@@ -483,7 +496,7 @@ function buildSamples(def){
   SF=new Uint8Array(N);
   for(i=0;i<N;i++){
     var u2=i/N;
-    if(circDist(u2,def.pit)<0.020) SF[i]=2;                     /* pit / recharge strip */
+    if(circDist(u2,def.pit)<0.027) SF[i]=2;                     /* pit / recharge strip */
     for(k=0;k<def.boosts.length;k++) if(circDist(u2,def.boosts[k])<0.0075) SF[i]=1;
     if(def.jumps) for(k=0;k<def.jumps.length;k++) if(circDist(u2,def.jumps[k])<0.0050) SF[i]=3;
   }
@@ -786,14 +799,15 @@ function setGridLights(n,go){
 }
 
 /* surface overlay ribbons (boost pads, pit strip, start line) */
-function ribbon(s0,s1,mat,lift,widthScale,vTiles){
+function ribbon(s0,s1,mat,lift,widthScale,vTiles,off){
   var segs=Math.max(2,Math.round((s1-s0)/5)),pos=[],uv=[],idx=[],i,o={pos:new V3(),tan:new V3(),right:new V3(),up:new V3()};
   for(i=0;i<=segs;i++){
     var s=s0+(s1-s0)*(i/segs);
     sampleAt(s,o);
-    var hw=o.width*0.5*widthScale;
-    var lx=o.pos.x-o.right.x*hw+o.up.x*lift, ly=o.pos.y-o.right.y*hw+o.up.y*lift, lz=o.pos.z-o.right.z*hw+o.up.z*lift;
-    var rx=o.pos.x+o.right.x*hw+o.up.x*lift, ry=o.pos.y+o.right.y*hw+o.up.y*lift, rz=o.pos.z+o.right.z*hw+o.up.z*lift;
+    var hw=o.width*0.5*widthScale,ox=off||0;
+    var cx=o.pos.x+o.right.x*ox, cy=o.pos.y+o.right.y*ox, cz=o.pos.z+o.right.z*ox;
+    var lx=cx-o.right.x*hw+o.up.x*lift, ly=cy-o.right.y*hw+o.up.y*lift, lz=cz-o.right.z*hw+o.up.z*lift;
+    var rx=cx+o.right.x*hw+o.up.x*lift, ry=cy+o.right.y*hw+o.up.y*lift, rz=cz+o.right.z*hw+o.up.z*lift;
     pos.push(lx,ly,lz,rx,ry,rz);
     var v=(i/segs)*vTiles;
     uv.push(0,v,1,v);
@@ -813,6 +827,8 @@ function padMat(t,col,op){
   scrollMats.push(tt);return m;
 }
 var boostZones=[],pitZone=null;
+function pitLaneX(){return (trackDef.pitSide||-1)*trackDef.width*0.30;}
+function onPitLane(x){return Math.abs(x-pitLaneX())<trackDef.width*0.19;}
 function buildOverlays(){
   boostZones=[];pitZone=null;
   var i,inZone=false,start=0;
@@ -848,7 +864,7 @@ function buildOverlays(){
   for(i=0;i<N;i++){if(SF[i]===2){if(pStart<0)pStart=i;pEnd=i;}}
   if(pStart>=0){
     pitZone=[pStart*DS,pEnd*DS];
-    ribbon(pitZone[0],pitZone[1],padMat(pitTex,0x7fe8ff,0.40),0.10,0.96,(pitZone[1]-pitZone[0])/14);
+    ribbon(pitZone[0],pitZone[1],padMat(pitTex,0x7fe8ff,0.55),0.10,0.38,(pitZone[1]-pitZone[0])/14,pitLaneX());
   }
   /* start / finish */
   ribbon(LEN-7,LEN+7,new THREE.MeshBasicMaterial({map:checkTex,side:THREE.DoubleSide,depthWrite:false,transparent:true}),0.14,1.0,1);
@@ -921,6 +937,7 @@ function updateHazards(dt,t){
         rc.hazCool=1.0;
         rc.v*=0.80;rc.energy-=CFG.hazDmg;rc.lat+=(rc.x-hz.x>=0?1:-1)*26;
         burst(rc.mesh.position,16,0xff5a4a,70,0.5);
+        spawnDebris(rc.mesh.position,4,rc.def.a,78);
         spawnWave(rc.mesh.position,rc.mesh.quaternion,0xff5a6e,10);
         if(rc.player){shake=Math.min(1.2,shake+0.55);hitFlash=0.8;sfx.crash(26);}
         break;
@@ -1442,6 +1459,8 @@ Racer.prototype.explode=function(){
   spawnWave(this.mesh.position,this.mesh.quaternion,0xfff0c0,18);
   spawnBall(this.mesh.position,0xffa040,17);
   spawnBall(this.mesh.position,0xfff2d0,9);
+  spawnDebris(this.mesh.position,18,this.def.a,150);
+  spawnDebris(this.mesh.position,6,this.def.b,120);
   sfx.crash(40);
   announce(this.name+' ZERST\u00d6RT',this.player?'#ff8aa8':'#ffb04a');
   speech.say(this.player?'Maschine zerst\u00f6rt!':this.name+' ausgeschieden.',this.player);
@@ -1459,6 +1478,7 @@ Racer.prototype.doSpin=function(){
     if(Math.abs(sDiff(r.s,this.s))<15&&Math.abs(r.x-this.x)<13){
       r.lat+=(r.x-this.x>=0?1:-1)*95;r.v*=0.86;r.energy-=24;
       burst(r.mesh.position,16,0xffe89a,70,0.45);
+      spawnDebris(r.mesh.position,3,r.def.a,72);
       if(r.player){shake=Math.min(1.2,shake+0.6);hitFlash=0.7;}
     }
   }
@@ -1619,6 +1639,7 @@ Racer.prototype.wall=function(dt){
     if(impact>4){
       this.energy-=clamp(impact*0.16,0.5,20)*(this.player?1:0.62);
       burst(this.mesh.position,this.player?14:6,0xffc46a,impact*1.1+16,0.5);
+      if(impact>13)spawnDebris(this.mesh.position,impact>26?5:3,this.def.a,impact*1.2+22);
       if(this.player){shake=Math.min(1.2,shake+impact*0.018);hitFlash=Math.min(1,impact/34);sfx.crash(impact);}
     }else if(this.player){
       this.energy-=9*dt;
@@ -1690,10 +1711,15 @@ Racer.prototype.drive=function(dt,t){
     if(this.boost<=0)sfx.pad();
     this.boost=Math.max(this.boost,0.6);
     this.v=Math.max(this.v,this.top*1.04);
-  }else if(o.surf===2){
+  }else if(o.surf===2&&onPitLane(this.x)){
     if(this.energy<100){this.energy=Math.min(100,this.energy+CFG.pitRecharge*dt);}
+    if(Math.random()<0.5)burst(this.mesh.position,1,0x7fe8ff,26,0.3);
   }
   if(this.energy<20&&this.energy>0&&!this.warnedLow){this.warnedLow=true;speech.say('Energie kritisch!');}
+  if(pitZone&&this.energy<45&&this.pitCall!==this.lap){
+    var dpc=sDiff(pitZone[0],this.s);
+    if(dpc>140&&dpc<300){this.pitCall=this.lap;speech.say('Boxenmarkierung voraus.');}
+  }
   if(this.energy>45)this.warnedLow=false;
   this.energy=clamp(this.energy,0,100);
   if(this.energy<28&&this.dead<=0&&Math.random()<(0.55-this.energy*0.012))
@@ -1721,11 +1747,23 @@ Racer.prototype.think=function(dt,leadProgress){
   var lane=Math.sin(this.aiPhase)*this.styleLane;
   var target=clamp(-Math.sign(ac)*Math.min(Math.abs(ac)*2600,1)*o.width*0.24+lane,-o.width*0.5+5,o.width*0.5-5);
 
+  /* head for the pit lane when the bar gets low */
+  if(pitZone&&this.energy<62){
+    var dpit=sDiff(pitZone[0],this.s);
+    if(dpit>-((pitZone[1]-pitZone[0]))&&dpit<230)target=pitLaneX();
+  }
+
   /* dodge hazards ahead */
   for(var hh=0;hh<hazards.length;hh++){
     var hz2=hazards[hh],dhz=sDiff(hz2.s,this.s);
     if(dhz>4&&dhz<170&&Math.abs(hz2.x-target)<8.5)
       target=hz2.x+(hz2.x>=0?-1:1)*10.5;
+  }
+
+  /* on the last drop of power the pit beats everything else */
+  if(pitZone&&this.energy<38){
+    var dp2=sDiff(pitZone[0],this.s);
+    if(dp2>-(pitZone[1]-pitZone[0])&&dp2<200)target=pitLaneX();
   }
 
   /* avoid the racer directly ahead */
@@ -1738,7 +1776,7 @@ Racer.prototype.think=function(dt,leadProgress){
   var band=clamp((leadProgress-this.progress())/2200,-0.10,DIFFS[diff].band);
   maxV*=(1+band);
   if(o.surf===3)this.launch();
-  if(o.surf===2)this.energy=Math.min(100,this.energy+CFG.pitRecharge*0.8*dt);
+  if(o.surf===2&&onPitLane(this.x))this.energy=Math.min(100,this.energy+CFG.pitRecharge*0.85*dt);
   this.energy=clamp(this.energy,0,100);
   /* rivals fight back */
   /* aggressive rivals move across to block whoever is right behind */
@@ -1914,18 +1952,15 @@ var speech=(function(){
    MUSIC — streamed mp3 playlist, silent if the files are missing
    ===================================================================== */
 var MUSIC=[
-  {f:'neon-velocity.mp3',      t:'NEON VELOCITY'},
-  {f:'galactic-dawn.mp3',      t:'GALACTIC DAWN'},
+  {f:'neon-velocity.mp3',        t:'NEON VELOCITY'},
+  {f:'galactic-dawn.mp3',        t:'GALACTIC DAWN'},
   {f:'deserto-de-velocidade.mp3',t:'DESERTO DE VELOCIDADE'},
-  {f:'vice-coast-run.mp3',     t:'VICE COAST RUN'},
-  {f:'neon-heist-run.mp3',     t:'NEON HEIST RUN'},
-  {f:'iron-ring-overdrive.mp3',t:'IRON RING OVERDRIVE'},
-  {f:'black-ice-apex.mp3',     t:'BLACK ICE APEX'},
-  {f:'gasket-thunder.mp3',     t:'GASKET THUNDER'},
-  {f:'jet-fuel-glory.mp3',     t:'JET FUEL GLORY'}
+  {f:'neon-velocity-2.mp3',      t:'NEON VELOCITY — TAKE 2'},
+  {f:'galactic-dawn-2.mp3',      t:'GALACTIC DAWN — TAKE 2'}
 ];
 var MUSIC_DIRS=['music/','neo-velocity/music/'];
-var elNow=document.getElementById('nowplaying'),elKo=document.getElementById('kolog');
+var elNow=document.getElementById('nowplaying'),elKo=document.getElementById('kolog'),
+    elMirror=document.getElementById('mirror'),elPit=document.getElementById('pithint');
 function announce(txt,col){
   var d=document.createElement('div');
   d.textContent=txt;d.style.color=col||'#ffe81f';
@@ -2006,6 +2041,7 @@ window.addEventListener('keydown',function(e){
   if(c==='KeyQ'||c==='q'){setQuality(!lowQ);}
   if(c==='KeyM'||c==='m'){var mm=sfx.toggle();bgm.mute(mm);if(mm)speech.stop();}
   if(c==='KeyV'||c==='v'){toast(elToast,speech.toggle()?'ANSAGE AN':'ANSAGE AUS');}
+  if(c==='KeyB'||c==='b'){mirrorOn=!mirrorOn;toast(elToast,mirrorOn?'HECKSICHT AN':'HECKSICHT AUS');}
   if(c==='KeyN'||c==='n'){bgm.next();}
   if(c==='Minus'||c==='NumpadSubtract'||c==='BracketLeft'||c==='Slash'){bgm.vol(-0.1);}
   if(c==='Equal'||c==='NumpadAdd'||c==='BracketRight'){bgm.vol(0.1);}
@@ -2141,6 +2177,17 @@ function updateHUD(){
   var ready=p.energy>26&&p.boost<=0;
   elBoost.textContent=p.drafting>0.35?'SLIPSTREAM':(p.boost>0?'BOOST ACTIVE':(ready?'BOOST READY':'LOW POWER'));
   if(ready||p.boost>0)elBoost.classList.remove('off');else elBoost.classList.add('off');
+  if(pitZone&&state==='race'){
+    var dp=sDiff(pitZone[0],p.s),inside=(dp<=0&&sDiff(pitZone[1],p.s)>0);
+    if(inside){
+      elPit.className='on'+(onPitLane(p.x)?'':' urgent');
+      elPit.textContent=onPitLane(p.x)?('BOX  \u2191  '+Math.round(p.energy)+'%'):
+        ('BOX '+(pitLaneX()<0?'\u2190':'\u2192')+'  '+Math.round(p.energy)+'%');
+    }else if(dp>0&&dp<420&&p.energy<78){
+      elPit.className='on'+(p.energy<35?' urgent':'');
+      elPit.textContent='BOX IN '+Math.round(dp)+'m  '+(pitLaneX()<0?'\u2190 LINKS':'RECHTS \u2192');
+    }else elPit.className='';
+  }else elPit.className='';
   elFx.style.opacity=clamp((p.v/p.top-0.55)*0.85,0,0.75).toFixed(3);
   elHit.style.opacity=hitFlash.toFixed(3);
 }
@@ -2179,6 +2226,95 @@ function drawMap(){
     mg.fill();
     if(rc.player){mg.strokeStyle='#ff45c8';mg.lineWidth=2;mg.stroke();}
   }
+}
+
+
+/* =====================================================================
+   DEBRIS — parts torn off on impact
+   ===================================================================== */
+var DEBRIS_N=110,debris=[],dHead=0,debrisMesh=null,_dm=new THREE.Matrix4(),_dq=new THREE.Quaternion(),
+    _de=new THREE.Euler(),_dsc=new V3(),_dcol=new THREE.Color();
+function initDebris(){
+  debrisMesh=new THREE.InstancedMesh(new THREE.BoxGeometry(0.9,0.34,1.5),
+    new THREE.MeshStandardMaterial({roughness:0.45,metalness:0.45,flatShading:true}),DEBRIS_N);
+  debrisMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  debrisMesh.frustumCulled=false;
+  for(var i=0;i<DEBRIS_N;i++){
+    debris.push({p:new V3(0,-9999,0),v:new V3(),e:new THREE.Euler(),rv:new V3(),life:0,max:1,s:1});
+    debrisMesh.setColorAt(i,_dcol.setHex(0xffffff));
+  }
+  scene.add(debrisMesh);
+  debrisWrite();
+}
+function spawnDebris(pos,n,color,speed){
+  if(!debrisMesh)return;
+  _dcol.setHex(color);
+  for(var i=0;i<n;i++){
+    var k=dHead;dHead=(dHead+1)%DEBRIS_N;
+    var d=debris[k];
+    d.p.copy(pos);
+    d.v.set(rnd(-1,1),rnd(0.25,1),rnd(-1,1)).normalize().multiplyScalar(rnd(speed*0.35,speed));
+    d.rv.set(rnd(-9,9),rnd(-9,9),rnd(-9,9));
+    d.e.set(rnd(0,6),rnd(0,6),rnd(0,6));
+    d.life=d.max=rnd(0.9,1.9);
+    d.s=rnd(0.55,1.5);
+    debrisMesh.setColorAt(k,_dcol);
+  }
+  if(debrisMesh.instanceColor)debrisMesh.instanceColor.needsUpdate=true;
+}
+function debrisWrite(){
+  for(var i=0;i<DEBRIS_N;i++){
+    var d=debris[i],f=d.life>0?Math.min(1,d.life/0.35):0;
+    _dq.setFromEuler(d.e);
+    _dsc.set(d.s*f,d.s*f,d.s*f);
+    _dm.compose(d.p,_dq,_dsc);
+    debrisMesh.setMatrixAt(i,_dm);
+  }
+  debrisMesh.instanceMatrix.needsUpdate=true;
+}
+function updateDebris(dt){
+  if(!debrisMesh)return;
+  var any=false;
+  for(var i=0;i<DEBRIS_N;i++){
+    var d=debris[i];
+    if(d.life<=0)continue;
+    any=true;
+    d.life-=dt;
+    d.v.y-=150*dt;
+    d.v.multiplyScalar(1-0.8*dt);
+    d.p.addScaledVector(d.v,dt);
+    d.e.x+=d.rv.x*dt;d.e.y+=d.rv.y*dt;d.e.z+=d.rv.z*dt;
+    if(d.life<=0)d.p.set(0,-9999,0);
+  }
+  if(any)debrisWrite();
+}
+
+/* =====================================================================
+   REAR VIEW — second pass into a scissored viewport
+   ===================================================================== */
+var mirrorCam=new THREE.PerspectiveCamera(64,3.2,0.5,4000),mirrorOn=true,_mt=new V3();
+function renderMirror(){
+  if(!mirrorOn||lowQ||!player||state==='menu'||player.dead>0){elMirror.classList.remove('on');return;}
+  elMirror.classList.add('on');
+  var w=renderer.domElement.width,h=renderer.domElement.height;
+  var mw=Math.round(w*0.30),mh=Math.round(mw/3.2);
+  var mx=Math.round((w-mw)/2),my=h-mh-Math.round(h*0.045);
+  var o=sampleAt(player.s,smpC);
+  _dir.set(0,0,-1).applyQuaternion(player.mesh.quaternion);
+  mirrorCam.position.copy(player.mesh.position).addScaledVector(_dir,-3.4).addScaledVector(o.up,2.2);
+  mirrorCam.up.copy(o.up);
+  _mt.copy(player.mesh.position).addScaledVector(_dir,-70).addScaledVector(o.up,4);
+  mirrorCam.lookAt(_mt);
+  mirrorCam.aspect=mw/mh;mirrorCam.updateProjectionMatrix();
+  renderer.setRenderTarget(null);
+  renderer.setScissorTest(true);
+  renderer.setViewport(mx,my,mw,mh);
+  renderer.setScissor(mx,my,mw,mh);
+  renderer.clear(false,true,false);
+  renderer.render(scene,mirrorCam);
+  renderer.setScissorTest(false);
+  renderer.setViewport(0,0,w,h);
+  renderer.setScissor(0,0,w,h);
 }
 
 /* =====================================================================
@@ -2647,14 +2783,20 @@ function tick(dt){
     updateHUD();drawMap();
   }
 
+  if(elMirror.classList.contains('on')){
+    var mh2=(renderer.domElement.clientWidth*0.30)/3.2;
+    elMirror.style.top=Math.round(renderer.domElement.clientHeight*0.045)+'px';
+    elMirror.style.height=Math.round(mh2)+'px';
+  }
   hitFlash=Math.max(0,hitFlash-dt*2.2);
-  updateMotes(dt);updateWaves(dt);updateBalls(dt);updateHazards(dt,t);updateStreaks();
+  updateMotes(dt);updateWaves(dt);updateBalls(dt);updateDebris(dt);updateHazards(dt,t);updateStreaks();
   traffic.rotation.y+=dt*0.006;
   for(i=0;i<scrollMats.length;i++)scrollMats[i].offset.y=(scrollMats[i].offset.y-dt*1.6)%1;
   for(i=0;i<chaseMats.length;i++)chaseMats[i].offset.y=(chaseMats[i].offset.y-dt*0.55)%1;
   updateParticles(dt);
   if(player)sfx.engine(player.v,player.top,player.boost>0,state==='race'&&player.dead<=0);
   renderFrame();
+  renderMirror();
 }
 window.addEventListener('resize',function(){
   var w=Math.max(1,window.innerWidth),h=Math.max(1,window.innerHeight);
@@ -2698,7 +2840,8 @@ state:function(){return {state:state,s:player.s,x:player.x,v:player.v,lap:player
   cam:camera.position.toArray().map(Math.round),ship:player.mesh.position.toArray().map(Math.round),
   look:camLook.toArray().map(Math.round),up:camUp.toArray().map(function(n){return +n.toFixed(2)}),
   fov:Math.round(camera.fov),energy:Math.round(player.energy),track:trackDef.name,len:Math.round(LEN),
-  music:bgm.playing()?bgm.title():'off',mode:MODES[mode].k,diff:DIFFS[diff].name,tune:TUNES[tune].name,dir:DIRS[dirIdx].name,styles:racers.filter(function(r){return !r.player;}).map(function(r){return r.style;}).join('/'),speech:speech.available()?speech.voiceName():'n/a',top:Math.round(player.top),
+  music:bgm.playing()?bgm.title():'off',mode:MODES[mode].k,diff:DIFFS[diff].name,tune:TUNES[tune].name,dir:DIRS[dirIdx].name,mirror:mirrorOn,pitLane:Math.round(pitLaneX()),onPit:onPitLane(player.x),debris:debris.filter(function(d){return d.life>0;}).length,
+  styles:racers.filter(function(r){return !r.player;}).map(function(r){return r.style;}).join('/'),speech:speech.available()?speech.voiceName():'n/a',top:Math.round(player.top),
   gp:gpRace,cup:CUPS[cup].name,pts:JSON.stringify(gpPts),ghost:ghost.best?Math.floor(ghost.best.length/3)+' samples':'none',
   air:Math.round(player.air*10)/10,haz:hazards.length,
   aiHp:racers.filter(function(r){return !r.player;}).map(function(r){return Math.round(r.energy);}).join('/'),vy:Math.round(player.vy),draft:Math.round((player.drafting||0)*100)/100,
@@ -2725,6 +2868,7 @@ function endIntro(){
 
 /* boot */
 initPost();
+initDebris();
 records=loadRecords();
 buildTrack(selTrack);
 paintCards();

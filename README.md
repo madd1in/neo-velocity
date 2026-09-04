@@ -73,6 +73,14 @@ into a rival for a side attack, or hit `E` for a spin attack that flings everyth
 (12 power, 1.6 s cooldown) — the quicker rivals will spin you right back. Every circuit is also
 seeded with hazard drones that cost power and speed; the AI steers around them.
 
+**Pit strategy** — the recharge strip is a lane, not the whole road, so topping up costs you the
+racing line. The HUD counts it down ("BOX IN 340m ← LINKS"), the announcer reminds you when the
+bar is low, and rivals divert to it themselves — below 38 % power the pit outranks even their
+hazard dodging.
+
+**Rear view** — `B` opens a mirror strip along the top edge, rendered as a second scissored pass
+from a rear-facing camera.
+
 **F-Zero mechanics** — a power bar doubles as health and boost fuel: scraping the rails drains
 it, hitting one hard costs a chunk, zero power destroys the machine (explosion, respawn at 42 %).
 The pit strip recharges you, dash plates fire you forward, and boost costs 20 power.
@@ -84,14 +92,15 @@ speed-scaled radial smear of that glow, chromatic stretch, vignette, grain and g
 mapping follows the player, per-theme motes drift around the camera (desert dust, trench embers,
 forest fireflies), every machine drags an additive engine trail, speed lines streak past above
 ~62 % of top speed, boosts and launches punch out a shockwave ring, boosting warps the frame radially,
-explosions add a fireball, a screen-space sun flare fires when the star is in view, a light rig
+explosions add a fireball and tear shards off the machine (instanced debris with gravity and
+tumble), a screen-space sun flare fires when the star is in view, a light rig
 runs the countdown over the grid, pulses chase along the rails and reflect onto the road, every
 machine drops a contact shadow, and the finish cuts to an orbiting camera, and the rest is sky shaders, neon rails, ring gates, procedural road
 textures, speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, plus a
 fully procedural WebAudio engine whose pitch tracks your speed. `Q` drops post and shadows for
 weaker GPUs.
 
-**Soundtrack** — nine streamed mp3 tracks in `music/` play as a shuffled, self-advancing
+**Soundtrack** — five streamed mp3 tracks in `music/` play as a shuffled, self-advancing
 playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
 `MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
 
@@ -119,6 +128,7 @@ delta against your standing record lap.
 | `N` | Next music track |
 | `-` / `+` | Music volume |
 | `V` | Announcer on/off |
+| `B` | Rear view on/off |
 | `M` | Mute everything |
 
 On touch devices: tap the left or right half to steer (throttle is automatic), both sides at
