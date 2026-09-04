@@ -21,6 +21,17 @@ banking, variable track width, boost pads and a pit-lane recharge strip:
 | SERPENT VALLEY | technical, narrow, hilly | ~6.9 km |
 | AURORA RUN | high speed, long sweepers | ~8.4 km |
 
+**Modes**
+
+- **Grand Prix** — all three circuits back to back, F-Zero points (10/8/6/4/2/1) after every
+  race, running standings between rounds and a champion screen at the end.
+- **Single race** — one circuit, three laps, five rivals.
+- **Time attack** — solo against a translucent ghost of your own best lap. The ghost is
+  sampled 20× per second and stored per circuit, so it comes back on your next session.
+
+**Difficulty** — Novice / Standard / Expert scale rival top speed and how hard they
+rubber-band back to you.
+
 **Machines** — three craft with distinct top speed / acceleration / grip / boost stats.
 
 **Driving** — the physics runs in track space (distance along the spline + lateral offset),
@@ -45,7 +56,8 @@ procedural WebAudio engine (no audio assets) whose pitch tracks your speed.
 playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
 `MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
 
-**Records** are stored per track in `localStorage`.
+**Records** are stored per track in `localStorage`, and every completed lap is shown with its
+delta against your standing record lap.
 
 ## Controls
 
@@ -82,8 +94,10 @@ Worth knowing if you want to poke at it:
   the previous geometry.
 - `CFG` — the handling constants (centrifugal scale, banking assist, steering, boost cost).
 - `MUSIC` / `SFX_MASTER` — playlist entries and the sound-effect master gain.
-- `MACHINES` / `RIVALS` — vehicle and AI stats.
+- `MACHINES` / `RIVALS` / `DIFFS` — vehicle stats, AI stats and difficulty scaling.
+- `POINTS` — the grand prix scoring table.
 - `window.NV` — a small debug hook left in on purpose:
-  `NV.state()` dumps the player/camera state, `NV.step(n)` advances the simulation
+  `NV.state()` dumps the player/camera/ghost state, `NV.step(n)` advances the simulation
   deterministically without waiting for frames, `NV.track(i)` switches circuit,
+  `NV.mode(m,d)` picks mode and difficulty, `NV.gp(i)` jumps to a grand prix round,
   and `NV.probe()` renders the framebuffer as ASCII. Handy for automated checks.
