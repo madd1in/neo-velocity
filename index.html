@@ -156,6 +156,19 @@ td.p{color:#ffe81f;font-weight:700}
   background:repeating-linear-gradient(90deg,transparent 0 4px,rgba(0,10,20,.85) 4px 6px)}
 
 @media (max-width:640px){#speed{font-size:40px}#map{width:110px;height:110px}}
+@media (max-height:620px){
+  .screen{gap:5px;padding:8px}
+  h1{font-size:clamp(18px,3.8vw,46px)}
+  h2,#crawl{font-size:9px}
+  .card{padding:5px 9px}
+  .card b{font-size:12px}
+  .card .tag{margin-bottom:4px}
+  .bar{margin:2px 0}
+  .card .rec{margin-top:5px;padding-top:4px}
+  .pill{padding:5px 13px;font-size:10px}
+  button{padding:10px 30px;font-size:13px}
+  .keys{display:none}
+}
 </style>
 </head>
 <body>
@@ -194,6 +207,8 @@ td.p{color:#ffe81f;font-weight:700}
   <div class="pills" id="diffs"></div>
   <div class="hdr">MASCHINE</div>
   <div class="cards" id="cards"></div>
+  <div class="hdr">TUNING</div>
+  <div class="pills" id="tunes"></div>
   <div class="hdr" id="thdr">STRECKE</div>
   <div class="cards" id="tcards"></div>
   <button id="startbtn">RACE START</button>
@@ -353,19 +368,19 @@ scene.add(new THREE.Mesh(skyGeo,skyMat));
    TRACK — closed spline, arc-length sampled, auto-banked
    ===================================================================== */
 var TRACKS=[
- {name:'MUTE LOOP',haz:[[0.09,-9],[0.09,9],[0.40,0],[0.585,-8],[0.585,8],[0.775,4],[0.95,-6]],motes:{c:0x7fd8ff,o:0.40,s:1.4},jumps:[0.235,0.545,0.865],tag:'FLOWING',pts:26,base:900,width:31,
+ {name:'MUTE LOOP',traffic:0xbfe0ff,trafficO:0.60,haz:[[0.09,-9],[0.09,9],[0.40,0],[0.585,-8],[0.585,8],[0.775,4],[0.95,-6]],motes:{c:0x7fd8ff,o:0.40,s:1.4},jumps:[0.235,0.545,0.865],tag:'FLOWING',pts:26,base:900,width:31,
   r:[[3,275,0.40],[5,125,1.90],[2,-85,1.5708]],
   y:[[2,58,0.60],[5,26,0.00],[7,16,2.10]],
   wide:[[0.005,0.035,13],[0.52,0.045,6]],narrow:[[0.35,0.030,9],[0.72,0.028,8]],
   boosts:[0.155,0.305,0.47,0.63,0.80,0.925],pit:0.055,
   railA:0x26d9ff,railB:0xff33bf,deco:0x7a5bff,fog:0x0b0524,tint:0xffffff,grid:0x7a4bff},
- {name:'SERPENT VALLEY',haz:[[0.07,0],[0.33,-7],[0.33,7],[0.62,3],[0.90,-4],[0.90,6]],motes:{c:0x7fffc8,o:0.38,s:1.4},jumps:[0.175,0.505,0.795],tag:'TECHNICAL',pts:30,base:770,width:27,
+ {name:'SERPENT VALLEY',traffic:0xc8ffe0,trafficO:0.45,haz:[[0.07,0],[0.33,-7],[0.33,7],[0.62,3],[0.90,-4],[0.90,6]],motes:{c:0x7fffc8,o:0.38,s:1.4},jumps:[0.175,0.505,0.795],tag:'TECHNICAL',pts:30,base:770,width:27,
   r:[[4,-205,0.90],[7,105,0.30],[2,140,2.20]],
   y:[[3,84,1.10],[6,34,0.40],[9,14,0.00]],
   wide:[[0.005,0.030,11]],narrow:[[0.22,0.026,7],[0.48,0.024,8],[0.78,0.026,7]],
   boosts:[0.12,0.27,0.41,0.58,0.71,0.88],pit:0.055,
   railA:0x3dffb0,railB:0xffc21f,deco:0x27d99a,fog:0x03160f,tint:0xc6ffe4,grid:0x2fd0a0},
- {name:'AURORA RUN',haz:[[0.06,-11],[0.06,11],[0.31,0],[0.60,-9],[0.60,9],[0.86,5]],motes:{c:0xffc8e0,o:0.34,s:1.5},jumps:[0.155,0.445,0.735],tag:'HIGH SPEED',pts:24,base:1180,width:35,
+ {name:'AURORA RUN',traffic:0xffd0e8,trafficO:0.55,haz:[[0.06,-11],[0.06,11],[0.31,0],[0.60,-9],[0.60,9],[0.86,5]],motes:{c:0xffc8e0,o:0.34,s:1.5},jumps:[0.155,0.445,0.735],tag:'HIGH SPEED',pts:24,base:1180,width:35,
   r:[[2,320,1.20],[3,-145,0.20],[6,70,2.60]],
   y:[[1,44,0.00],[4,58,1.70],[8,12,0.90]],
   wide:[[0.005,0.045,14],[0.40,0.050,8]],narrow:[[0.63,0.030,10]],
@@ -373,7 +388,7 @@ var TRACKS=[
   railA:0x9ec4ff,railB:0xff5a6e,deco:0xff7a9c,fog:0x160617,tint:0xffdce8,grid:0xa06bff},
 
  /* --- outer rim circuits --- */
- {name:'TWIN SUNS CANYON',haz:[[0.10,-8],[0.10,8],[0.38,0],[0.66,6],[0.90,-5]],motes:{c:0xffd9a0,o:0.55,s:1.9},jumps:[0.205,0.495,0.815],tag:'DESERT',pts:26,base:960,width:30,
+ {name:'TWIN SUNS CANYON',traffic:0xfff0d0,trafficO:0.30,haz:[[0.10,-8],[0.10,8],[0.38,0],[0.66,6],[0.90,-5]],motes:{c:0xffd9a0,o:0.55,s:1.9},jumps:[0.205,0.495,0.815],tag:'DESERT',pts:26,base:960,width:30,
   r:[[2,-255,0.50],[5,150,1.10],[3,95,2.40]],
   y:[[2,72,0.20],[3,46,1.60],[6,20,0.00]],
   wide:[[0.005,0.035,12],[0.60,0.040,7]],narrow:[[0.28,0.028,8],[0.82,0.026,9]],
@@ -384,7 +399,7 @@ var TRACKS=[
        sunB:[-0.34,0.10,-0.93],sunBC:0xe89a4e,bands:0},
   light:{sky:0xf0cf9e,ground:0x6b4526,hemi:0.62,sun:0xffeccc,sunI:0.92,sunPos:[-800,700,-900],rim:0xffb066,rimI:0.28}},
 
- {name:'TRENCH RUN',haz:[[0.05,0],[0.29,-6],[0.29,6],[0.55,0],[0.80,-5],[0.80,5]],motes:{c:0xffb070,o:0.45,s:1.3},jumps:[0.165,0.425,0.665,0.915],tag:'CANYON WALLS',pts:22,base:1260,width:23,
+ {name:'TRENCH RUN',traffic:0x9fc0ff,trafficO:0.35,haz:[[0.05,0],[0.29,-6],[0.29,6],[0.55,0],[0.80,-5],[0.80,5]],motes:{c:0xffb070,o:0.45,s:1.3},jumps:[0.165,0.425,0.665,0.915],tag:'CANYON WALLS',pts:22,base:1260,width:23,
   r:[[1,185,0.00],[4,-95,1.30],[7,45,0.60]],
   y:[[2,26,0.40],[5,12,1.90]],
   wide:[[0.005,0.040,10]],narrow:[[0.33,0.030,4],[0.66,0.030,4]],
@@ -395,7 +410,7 @@ var TRACKS=[
        sunB:[0.0,1.0,0.0],sunBC:0x000000,bands:0},
   light:{sky:0xa8c4e8,ground:0x141820,hemi:0.55,sun:0xdce8ff,sunI:0.85,sunPos:[-400,1100,-300],rim:0xff6a3c,rimI:0.40}},
 
- {name:'FOREST MOON SPRINT',haz:[[0.08,-6],[0.08,6],[0.35,0],[0.63,4],[0.88,-4]],motes:{c:0xbfff9f,o:0.50,s:1.6},jumps:[0.185,0.475,0.755],tag:'SPEEDER RUN',pts:30,base:720,width:25,
+ {name:'FOREST MOON SPRINT',traffic:0xd8ffc0,trafficO:0.40,haz:[[0.08,-6],[0.08,6],[0.35,0],[0.63,4],[0.88,-4]],motes:{c:0xbfff9f,o:0.50,s:1.6},jumps:[0.185,0.475,0.755],tag:'SPEEDER RUN',pts:30,base:720,width:25,
   r:[[5,-150,0.70],[8,72,2.00],[3,115,1.20]],
   y:[[4,58,0.90],[7,26,0.30]],
   wide:[[0.005,0.030,10]],narrow:[[0.20,0.024,6],[0.55,0.026,6],[0.85,0.024,6]],
@@ -585,6 +600,30 @@ var checkTex=tex(64,64,function(g,w,h){
     g.fillStyle=((x+y)%2)?'#ffffff':'#0e0e1a';g.fillRect(x*8,y*32,8,32);
   }
 });
+var chaseTex=tex(64,256,function(g,w,h){
+  g.clearRect(0,0,w,h);
+  var gr=g.createLinearGradient(0,0,0,h);
+  gr.addColorStop(0.00,'rgba(255,255,255,0)');
+  gr.addColorStop(0.40,'rgba(255,255,255,0.15)');
+  gr.addColorStop(0.50,'rgba(255,255,255,1)');
+  gr.addColorStop(0.60,'rgba(255,255,255,0.15)');
+  gr.addColorStop(1.00,'rgba(255,255,255,0)');
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+});
+var reflTex=tex(64,8,function(g,w,h){
+  var gr=g.createLinearGradient(0,0,w,0);
+  gr.addColorStop(0,'rgba(255,255,255,0.85)');
+  gr.addColorStop(0.35,'rgba(255,255,255,0.22)');
+  gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+});
+var shadowTex=tex(128,128,function(g,w,h){
+  var gr=g.createRadialGradient(64,64,4,64,64,62);
+  gr.addColorStop(0,'rgba(0,0,0,0.95)');
+  gr.addColorStop(0.55,'rgba(0,0,0,0.45)');
+  gr.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=gr;g.fillRect(0,0,w,h);
+});
 var glowTex=tex(128,128,function(g,w,h){
   var gr=g.createRadialGradient(64,64,2,64,64,62);
   gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.35,'rgba(160,230,255,.55)');
@@ -663,6 +702,78 @@ function buildEdges(def){
     gg.setIndex(gIdx);
     track.add(new THREE.Mesh(gg,new THREE.MeshBasicMaterial({vertexColors:true,side:THREE.DoubleSide,
       transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,opacity:0.5})));
+  }
+}
+
+var chaseMats=[],gridLights=[];
+/* light pulses running along the rails and their reflection on the road */
+function buildRailFx(def){
+  var cA=new THREE.Color(def.railA),cB=new THREE.Color(def.railB),side,i;
+  for(side=-1;side<=1;side+=2){
+    var pos=[],uv=[],idx=[],rpos=[],ruv=[],ridx=[];
+    for(i=0;i<=N;i++){
+      var j=i%N,p=SP[j],r=SR[j],u=SU[j],hw=SW[j]*0.5;
+      var ex=p.x+r.x*hw*side,ey=p.y+r.y*hw*side,ez=p.z+r.z*hw*side;
+      /* chase strip sits just above the rail */
+      pos.push(ex+u.x*0.6,ey+u.y*0.6,ez+u.z*0.6, ex+u.x*3.1,ey+u.y*3.1,ez+u.z*3.1);
+      var v=(i*DS)/150;
+      uv.push(0,v,1,v);
+      /* reflection fades from the edge toward the middle */
+      var inx=ex-r.x*7.5*side,iny=ey-r.y*7.5*side,inz=ez-r.z*7.5*side;
+      rpos.push(ex+u.x*0.10,ey+u.y*0.10,ez+u.z*0.10, inx+u.x*0.10,iny+u.y*0.10,inz+u.z*0.10);
+      ruv.push(0,v*6,1,v*6);
+    }
+    for(i=0;i<N;i++){var a=i*2;idx.push(a,a+1,a+2,a+1,a+3,a+2);ridx.push(a,a+1,a+2,a+1,a+3,a+2);}
+    var g1=new THREE.BufferGeometry();
+    g1.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    g1.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+    g1.setIndex(idx);
+    var t1=chaseTex.clone();t1.needsUpdate=true;t1.wrapS=t1.wrapT=THREE.RepeatWrapping;
+    var m1=new THREE.MeshBasicMaterial({map:t1,color:side<0?cA:cB,transparent:true,opacity:0.85,
+      blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+    chaseMats.push(t1);
+    var mesh1=new THREE.Mesh(g1,m1);mesh1.renderOrder=2;track.add(mesh1);
+
+    var g2=new THREE.BufferGeometry();
+    g2.setAttribute('position',new THREE.Float32BufferAttribute(rpos,3));
+    g2.setAttribute('uv',new THREE.Float32BufferAttribute(ruv,2));
+    g2.setIndex(ridx);
+    var t2=reflTex.clone();t2.needsUpdate=true;t2.wrapS=t2.wrapT=THREE.RepeatWrapping;
+    var m2=new THREE.MeshBasicMaterial({map:t2,color:side<0?cA:cB,transparent:true,opacity:0.30,
+      blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+    var mesh2=new THREE.Mesh(g2,m2);mesh2.renderOrder=1;track.add(mesh2);
+  }
+}
+/* light rig over the grid */
+function buildGantry(){
+  gridLights=[];
+  var o=sampleAt(LEN-3,{pos:new V3(),tan:new V3(),right:new V3(),up:new V3()});
+  var hw=o.width*0.5+5;
+  var mat=new THREE.MeshStandardMaterial({color:0x2b3040,roughness:0.5,metalness:0.7});
+  var post=new THREE.CylinderGeometry(1.1,1.5,30,7);
+  var basis=new THREE.Matrix4().makeBasis(o.right,o.up,new V3().crossVectors(o.right,o.up).normalize());
+  for(var k=-1;k<=1;k+=2){
+    var pm=new THREE.Mesh(post,mat);
+    pm.position.copy(o.pos).addScaledVector(o.right,hw*k).addScaledVector(o.up,14);
+    pm.quaternion.setFromRotationMatrix(basis);
+    track.add(pm);
+  }
+  var beam=new THREE.Mesh(new THREE.BoxGeometry(hw*2,2.2,2.6),mat);
+  beam.position.copy(o.pos).addScaledVector(o.up,28);
+  beam.quaternion.setFromRotationMatrix(basis);
+  track.add(beam);
+  var bulb=new THREE.SphereGeometry(1.15,10,8);
+  for(var i=0;i<5;i++){
+    var m=new THREE.Mesh(bulb,new THREE.MeshBasicMaterial({color:0x2a0a10}));
+    m.position.copy(o.pos).addScaledVector(o.right,(i-2)*hw*0.42).addScaledVector(o.up,26.4);
+    track.add(m);
+    gridLights.push(m);
+  }
+}
+function setGridLights(n,go){
+  for(var i=0;i<gridLights.length;i++){
+    var on=go||i<n;
+    gridLights[i].material.color.setHex(go?0x39ff88:(on?0xff2a3a:0x2a0a10));
   }
 }
 
@@ -902,6 +1013,23 @@ function buildDeco(def){
   }
 }
 
+/* distant traffic: slow lights drifting across the sky */
+var TRAF_N=26;
+var trafGeo=new THREE.BufferGeometry(),trafPos=new Float32Array(TRAF_N*3);
+(function(){
+  for(var i=0;i<TRAF_N;i++){
+    var a=Math.random()*Math.PI*2,r=1400+Math.random()*1700;
+    trafPos[i*3]=Math.cos(a)*r;
+    trafPos[i*3+1]=240+Math.random()*520;
+    trafPos[i*3+2]=Math.sin(a)*r;
+  }
+})();
+trafGeo.setAttribute('position',new THREE.BufferAttribute(trafPos,3));
+var trafMat=new THREE.PointsMaterial({size:9,map:glowTex,color:0xbfe0ff,transparent:true,opacity:0.55,
+  blending:THREE.AdditiveBlending,depthWrite:false,sizeAttenuation:true,fog:false});
+var traffic=new THREE.Points(trafGeo,trafMat);
+traffic.frustumCulled=false;scene.add(traffic);
+
 /* far ground grid */
 var groundGrid=new THREE.Mesh(new THREE.PlaneGeometry(16000,16000),
   new THREE.MeshBasicMaterial({map:gridTex,transparent:true,opacity:0.16,color:0x7a4bff,
@@ -923,11 +1051,13 @@ function buildTrack(idx){
   trackDef=TRACKS[idx];builtTrack=idx;
   for(var i=0;i<scrollMats.length;i++)scrollMats[i].dispose();
   scrollMats=[];
+  for(i=0;i<chaseMats.length;i++)chaseMats[i].dispose();
+  chaseMats=[];
   clearGroup(track);
   curve=makeCurve(trackDef);
   LEN=curve.getLength();DS=LEN/N;
   buildSamples(trackDef);
-  buildRoad();buildEdges(trackDef);buildOverlays();buildDeco(trackDef);buildHazards(trackDef);
+  buildRoad();buildEdges(trackDef);buildRailFx(trackDef);buildOverlays();buildDeco(trackDef);buildHazards(trackDef);buildGantry();
   buildMinimap();
   scene.fog.color.setHex(trackDef.fog);
   scene.fog.density=trackDef.fogD||0.00072;
@@ -952,6 +1082,8 @@ function buildTrack(idx){
   rim.intensity=L.rimI!==undefined?L.rimI:0.45;
   groundGrid.material.color.setHex(trackDef.grid);
   groundGrid.material.opacity=trackDef.gridO!==undefined?trackDef.gridO:0.16;
+  trafMat.color.setHex(trackDef.traffic!==undefined?trackDef.traffic:0xbfe0ff);
+  trafMat.opacity=trackDef.trafficO!==undefined?trackDef.trafficO:0.55;
   var MO=trackDef.motes||{c:0x9fd8ff,o:0.4,s:1.4};
   moteMat.color.setHex(MO.c);moteMat.opacity=MO.o;moteMat.size=MO.s;
   if(L.sunPos)sunDir.set(L.sunPos[0],L.sunPos[1],L.sunPos[2]).normalize();
@@ -1243,7 +1375,15 @@ function Racer(def,isPlayer,gridIndex){
   this.mesh.traverse(function(o){if(o.isMesh&&o.material&&o.material.type==='MeshStandardMaterial')o.castShadow=true;});
   scene.add(this.mesh);
   this.trail=makeTrail(def.a);scene.add(this.trail.mesh);
+  this.shadow=new THREE.Mesh(new THREE.PlaneGeometry(9,12),
+    new THREE.MeshBasicMaterial({map:shadowTex,color:0x000000,transparent:true,opacity:0.5,depthWrite:false}));
+  this.shadow.renderOrder=2;scene.add(this.shadow);
   this.top=def.top;this.acc=def.acc!==undefined?def.acc:0.6;
+  if(isPlayer){
+    var tt=TUNES[tune].t;
+    this.top*=1+0.075*tt;
+    this.acc*=1-0.30*tt;
+  }
   this.grip=def.grip!==undefined?def.grip:3.2;
   this.boostTop=def.boost!==undefined?def.boost:def.top*1.45;
   this.mass=def.mass!==undefined?def.mass:1;
@@ -1340,6 +1480,18 @@ Racer.prototype.place=function(t){
   this.mesh.quaternion.setFromRotationMatrix(_m);
   this.mesh.rotateZ(-this.roll);
   this.mesh.rotateX(this.pitch);
+  if(this.shadow){
+    if(this.dead>0){this.shadow.visible=false;}
+    else{
+      this.shadow.visible=true;
+      this.shadow.position.copy(o.pos).addScaledVector(o.right,this.x).addScaledVector(o.up,0.16);
+      _m.makeBasis(o.right,_f,o.up);
+      this.shadow.quaternion.setFromRotationMatrix(_m);
+      var sf=clamp(1-this.air/34,0.3,1);
+      this.shadow.scale.set(sf,sf,1);
+      this.shadow.material.opacity=0.55*sf*sf;
+    }
+  }
   this.mesh.visible=this.dead<=0;
   if(this.trail){
     if(this.dead>0||this.v<60||state==='menu'){this.trail.hist.length=0;this.trail.mesh.visible=false;}
@@ -2052,6 +2204,8 @@ var DIFFS=[{name:'NOVICE',ai:0.92,band:0.10},{name:'STANDARD',ai:1.00,band:0.16}
 var POINTS=[10,8,6,4,2,1];
 var CUPS=[{name:'NEON CUP',tag:'CITY CIRCUITS',tracks:[0,1,2]},
           {name:'OUTER RIM CUP',tag:'FAR SYSTEMS',tracks:[3,4,5]}];
+var TUNES=[{name:'ACCEL ++',t:-1},{name:'ACCEL +',t:-0.5},{name:'BALANCE',t:0},{name:'TOP +',t:0.5},{name:'TOP ++',t:1}];
+var tune=2;
 var mode=0,diff=1,cup=0,gpRace=0,gpPts={},gpTotal=null,recLapAtStart=null,ghostLapAtStart=null;
 var holdAt=-1,stall=0;
 var state='menu',raceTime=0,bestLap=null,countdown=0,countStep=-1,selected=0,selTrack=0,attractS=0;
@@ -2072,7 +2226,8 @@ function togglePause(){
 }
 var racers=[],player=null;
 var elPause=document.getElementById('pausemsg'),elModes=document.getElementById('modes'),
-    elDiffs=document.getElementById('diffs'),elTHdr=document.getElementById('thdr');
+    elDiffs=document.getElementById('diffs'),elTHdr=document.getElementById('thdr'),
+    elTunes=document.getElementById('tunes');
 var elMenu=document.getElementById('menu'),elRes=document.getElementById('results'),
     elCards=document.getElementById('cards'),elTCards=document.getElementById('tcards'),elRTitle=document.getElementById('rtitle'),
     elRSub=document.getElementById('rsub'),elRTable=document.getElementById('rtable'),
@@ -2090,13 +2245,16 @@ function pills(el,list,cur,cb){
 function paintCards(){
   pills(elModes,MODES,mode,function(i){mode=i;paintCards();});
   pills(elDiffs,DIFFS,diff,function(i){diff=i;paintCards();setupRace(selected);});
+  pills(elTunes,TUNES,tune,function(i){tune=i;paintCards();setupRace(selected);});
   var gp=MODES[mode].k==='gp';
   elTHdr.textContent=gp?'CUP':'STRECKE';
   elTCards.className='cards';
   var html='';
   for(var i=0;i<MACHINES.length;i++){
     var m=MACHINES[i];
-    var top=clamp((m.top-326)/80,0.05,1), acc=clamp(m.acc/1.05,0.05,1), grip=clamp((m.grip-2.2)/2.2,0.05,1);
+    var tt=TUNES[tune].t;
+    var top=clamp((m.top*(1+0.075*tt)-326)/80,0.05,1), acc=clamp(m.acc*(1-0.30*tt)/1.05,0.05,1),
+        grip=clamp((m.grip-2.2)/2.2,0.05,1);
     html+='<div class="card'+(i===selected?' sel':'')+'" data-i="'+i+'">'+
       '<b style="color:#'+('000000'+m.a.toString(16)).slice(-6)+'">'+m.name+'</b>'+
       '<div class="tag">'+m.tag+'</div>'+
@@ -2146,6 +2304,7 @@ function disposeRacers(){
   for(var i=0;i<racers.length;i++){
     scene.remove(racers[i].mesh);
     if(racers[i].trail){scene.remove(racers[i].trail.mesh);racers[i].trail.geo.dispose();racers[i].trail.mesh.material.dispose();}
+    if(racers[i].shadow){scene.remove(racers[i].shadow);racers[i].shadow.geometry.dispose();racers[i].shadow.material.dispose();}
     if(racers[i].light)scene.remove(racers[i].light);
   }
   racers=[];player=null;
@@ -2302,8 +2461,8 @@ function tick(dt){
     var step=Math.ceil(countdown-0.6);
     if(step!==countStep&&step>=0&&step<=3){
       countStep=step;
-      if(step>0){toast(elCenter,String(step));sfx.count(false);}
-      else{toast(elCenter,'GO!');sfx.count(true);}
+      if(step>0){toast(elCenter,String(step));sfx.count(false);setGridLights(step===3?1:(step===2?3:5),false);}
+      else{toast(elCenter,'GO!');sfx.count(true);setGridLights(5,true);}
     }
     if(K.up&&holdAt<0)holdAt=countdown;
     if(countdown<=0.6&&state==='countdown'){
@@ -2324,6 +2483,7 @@ function tick(dt){
     }
   }
   if(state==='race')raceTime+=dt;
+  if(state==='menu'&&gridLights.length)setGridLights(0,false);
 
   var lead=0,i;
   for(i=0;i<racers.length;i++)lead=Math.max(lead,racers[i].progress());
@@ -2350,7 +2510,9 @@ function tick(dt){
 
   hitFlash=Math.max(0,hitFlash-dt*2.2);
   updateMotes(dt);updateWaves(dt);updateHazards(dt,t);updateStreaks();
+  traffic.rotation.y+=dt*0.006;
   for(i=0;i<scrollMats.length;i++)scrollMats[i].offset.y=(scrollMats[i].offset.y-dt*1.6)%1;
+  for(i=0;i<chaseMats.length;i++)chaseMats[i].offset.y=(chaseMats[i].offset.y-dt*0.55)%1;
   updateParticles(dt);
   if(player)sfx.engine(player.v,player.top,player.boost>0,state==='race'&&player.dead<=0);
   renderFrame();
@@ -2397,7 +2559,7 @@ state:function(){return {state:state,s:player.s,x:player.x,v:player.v,lap:player
   cam:camera.position.toArray().map(Math.round),ship:player.mesh.position.toArray().map(Math.round),
   look:camLook.toArray().map(Math.round),up:camUp.toArray().map(function(n){return +n.toFixed(2)}),
   fov:Math.round(camera.fov),energy:Math.round(player.energy),track:trackDef.name,len:Math.round(LEN),
-  music:bgm.playing()?bgm.title():'off',mode:MODES[mode].k,diff:DIFFS[diff].name,
+  music:bgm.playing()?bgm.title():'off',mode:MODES[mode].k,diff:DIFFS[diff].name,tune:TUNES[tune].name,top:Math.round(player.top),
   gp:gpRace,cup:CUPS[cup].name,pts:JSON.stringify(gpPts),ghost:ghost.best?Math.floor(ghost.best.length/3)+' samples':'none',
   air:Math.round(player.air*10)/10,haz:hazards.length,
   aiHp:racers.filter(function(r){return !r.player;}).map(function(r){return Math.round(r.energy);}).join('/'),vy:Math.round(player.vy),draft:Math.round((player.drafting||0)*100)/100,
