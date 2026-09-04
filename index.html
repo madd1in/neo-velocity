@@ -2488,7 +2488,7 @@ function onLap(r){
       ghostReset();
     }
     if(r.lap===CFG.laps)speech.say('Letzte Runde!',true);
-    else if(r.lap<CFG.laps)speech.say('Runde '+r.lap);
+    else if(r.lap<CFG.laps)speech.say('Runde '+r.lap,true);
     if(r.lap<=CFG.laps){
       var d=(recLapAtStart===null||recLapAtStart===undefined)?null:lt-recLapAtStart;
       toast(elToast,'LAP '+r.lap+'   '+fmt(lt)+(d===null?'':
