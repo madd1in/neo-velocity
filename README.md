@@ -15,16 +15,25 @@ No build step, no dependencies to install — open `index.html` and race.
 radius/elevation profile, arc-length sampled into 1600 frames with automatically derived
 banking, variable track width, boost pads and a pit-lane recharge strip:
 
-| Track | Character | Length |
-|---|---|---|
-| MUTE LOOP | flowing, wide | ~7.2 km |
-| SERPENT VALLEY | technical, narrow, hilly | ~6.9 km |
-| AURORA RUN | high speed, long sweepers | ~8.4 km |
+| Cup | Track | Character | Length |
+|---|---|---|---|
+| Neon | MUTE LOOP | flowing, wide | ~7.2 km |
+| Neon | SERPENT VALLEY | technical, narrow, hilly | ~6.9 km |
+| Neon | AURORA RUN | high speed, long sweepers | ~8.4 km |
+| Outer Rim | TWIN SUNS CANYON | desert mesas under two suns | ~7.4 km |
+| Outer Rim | TRENCH RUN | narrow, walled, very fast | ~8.2 km |
+| Outer Rim | FOREST MOON SPRINT | twisty night forest | ~6.2 km |
+
+Each circuit carries its own theme: sky gradient and sun positions, fog, lighting, road
+surface and roadside scenery (neon pylons, canyon rock, trench walls, conifers) are all
+per-track, and the scenery is drawn with instanced meshes so a few hundred props cost a
+handful of draw calls.
 
 **Modes**
 
-- **Grand Prix** — all three circuits back to back, F-Zero points (10/8/6/4/2/1) after every
-  race, running standings between rounds and a champion screen at the end.
+- **Grand Prix** — pick a cup (Neon or Outer Rim), race its three circuits back to back with
+  F-Zero points (10/8/6/4/2/1) after every race, running standings between rounds and a
+  champion screen at the end.
 - **Single race** — one circuit, three laps, five rivals.
 - **Time attack** — solo against a translucent ghost of your own best lap. The ghost is
   sampled 20× per second and stored per circuit, so it comes back on your next session.
@@ -32,7 +41,9 @@ banking, variable track width, boost pads and a pit-lane recharge strip:
 **Difficulty** — Novice / Standard / Expert scale rival top speed and how hard they
 rubber-band back to you.
 
-**Machines** — three craft with distinct top speed / acceleration / grip / boost stats.
+**Machines** — six craft with distinct top speed / acceleration / grip / boost stats and their
+own low-poly models: three arcade racers plus a twin-engine podracer (fastest, twitchiest), an
+X-winged fighter and a hex-panelled interceptor. Rivals ride a mix of the same shapes.
 
 **Driving** — the physics runs in track space (distance along the spline + lateral offset),
 so the model stays stable at 600 km/h: centrifugal load scaled by curvature and speed²,
@@ -52,7 +63,7 @@ Holding the air brake while sliding into a rival performs a side attack.
 speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, and a fully
 procedural WebAudio engine (no audio assets) whose pitch tracks your speed.
 
-**Soundtrack** — six streamed mp3 tracks in `music/` play as a shuffled, self-advancing
+**Soundtrack** — nine streamed mp3 tracks in `music/` play as a shuffled, self-advancing
 playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
 `MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
 
