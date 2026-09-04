@@ -53,6 +53,9 @@ canvas#c{position:fixed;inset:0;width:100%;height:100%;display:block}
   text-shadow:0 0 34px rgba(90,210,255,.85)}
 #pausemsg.on{display:flex}
 #pausemsg span{font-size:10px;letter-spacing:.3em;color:#8fb6d8;text-shadow:none}
+#nowplaying{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:9px;letter-spacing:.28em;
+  color:#9fe9ff;opacity:0;transition:opacity .6s;text-shadow:0 0 14px rgba(70,200,255,.7);pointer-events:none}
+#nowplaying.on{opacity:.65}
 
 .screen{position:fixed;inset:0;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;justify-content:safe center;
   gap:20px;text-align:center;padding:20px;z-index:20;transition:opacity .35s;
@@ -114,6 +117,7 @@ td.p{color:#ff8ad8;font-weight:700}
   <div id="center"></div>
   <div id="laptoast"></div>
   <div id="pausemsg">PAUSE<span>P / ESC = WEITER</span></div>
+  <div id="nowplaying"></div>
 </div>
 
 <div id="menu" class="screen">
@@ -126,7 +130,7 @@ td.p{color:#ff8ad8;font-weight:700}
   <div class="keys">
     <span><b>W &uarr;</b>Gas</span><span><b>S &darr;</b>Bremse</span><span><b>A D &larr; &rarr;</b>Lenken</span>
     <span><b>SHIFT</b>Airbrake</span><span><b>LEER</b>Boost</span><span><b>C</b>Kamera</span>
-    <span><b>P / ESC</b>Pause</span><span><b>R</b>Neustart</span><span><b>Q</b>Qualit&auml;t</span><span><b>M</b>Sound</span>
+    <span><b>P / ESC</b>Pause</span><span><b>R</b>Neustart</span><span><b>Q</b>Qualit&auml;t</span><span><b>N</b>N&auml;chster Track</span><span><b>- / +</b>Musik</span><span><b>M</b>Sound</span>
   </div>
 </div>
 
@@ -875,23 +879,25 @@ function collide(dt){
 /* =====================================================================
    AUDIO (pure WebAudio, no assets)
    ===================================================================== */
+var SFX_MASTER=0.42;
 var sfx=(function(){
-  var ac=null,eng=null,muted=false,lastScrape=0,noiseBuf=null;
+  var ac=null,eng=null,master=null,muted=false,lastScrape=0,noiseBuf=null;
   function ensure(){
     if(ac||muted)return ac;
     var AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;
     ac=new AC();
+    master=ac.createGain();master.gain.value=SFX_MASTER;master.connect(ac.destination);
     noiseBuf=ac.createBuffer(1,ac.sampleRate*1.2,ac.sampleRate);
     var d=noiseBuf.getChannelData(0);
     for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-    var g=ac.createGain();g.gain.value=0.0;g.connect(ac.destination);
+    var g=ac.createGain();g.gain.value=0.0;g.connect(master);
     var f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=900;f.Q.value=6;f.connect(g);
     var o1=ac.createOscillator();o1.type='sawtooth';o1.frequency.value=60;o1.connect(f);o1.start();
     var o2=ac.createOscillator();o2.type='square';o2.frequency.value=90;
     var g2=ac.createGain();g2.gain.value=0.35;o2.connect(g2);g2.connect(f);o2.start();
     var ns=ac.createBufferSource();ns.buffer=noiseBuf;ns.loop=true;
     var nf=ac.createBiquadFilter();nf.type='bandpass';nf.frequency.value=1400;nf.Q.value=0.7;
-    var ng=ac.createGain();ng.gain.value=0.0;ns.connect(nf);nf.connect(ng);ng.connect(ac.destination);ns.start();
+    var ng=ac.createGain();ng.gain.value=0.0;ns.connect(nf);nf.connect(ng);ng.connect(master);ns.start();
     eng={g:g,f:f,o1:o1,o2:o2,ng:ng,nf:nf};
     return ac;
   }
@@ -902,7 +908,7 @@ var sfx=(function(){
     if(sweep)o.frequency.exponentialRampToValueAtTime(Math.max(40,sweep),ac.currentTime+dur);
     g.gain.setValueAtTime(vol||0.12,ac.currentTime);
     g.gain.exponentialRampToValueAtTime(0.0008,ac.currentTime+dur);
-    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+dur+0.02);
+    o.connect(g);g.connect(master);o.start();o.stop(ac.currentTime+dur+0.02);
   }
   function noise(dur,vol,freq){
     if(!ensure()||muted)return;
@@ -910,7 +916,7 @@ var sfx=(function(){
     var f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=freq||800;f.Q.value=0.8;
     var g=ac.createGain();g.gain.setValueAtTime(vol,ac.currentTime);
     g.gain.exponentialRampToValueAtTime(0.0008,ac.currentTime+dur);
-    s.connect(f);f.connect(g);g.connect(ac.destination);s.start();s.stop(ac.currentTime+dur);
+    s.connect(f);f.connect(g);g.connect(master);s.start();s.stop(ac.currentTime+dur);
   }
   return {
     unlock:function(){ensure();if(ac&&ac.state==='suspended')ac.resume();},
@@ -922,8 +928,8 @@ var sfx=(function(){
       eng.o1.frequency.value=52+r*260+(boost?70:0);
       eng.o2.frequency.value=78+r*400+(boost?110:0);
       eng.f.frequency.value=420+r*2300;
-      eng.g.gain.value=alive?(0.035+r*0.055):0;
-      eng.ng.gain.value=alive?r*r*0.045:0;
+      eng.g.gain.value=alive?(0.030+r*0.042):0;
+      eng.ng.gain.value=alive?r*r*0.032:0;
       eng.nf.frequency.value=600+r*2600;
     },
     boost:function(){blip(180,0.55,'sawtooth',0.18,1400);noise(0.4,0.16,1800);},
@@ -934,6 +940,63 @@ var sfx=(function(){
     lap:function(){blip(660,0.12,'square',0.12);setTimeout(function(){blip(990,0.22,'square',0.12);},110);},
     respawn:function(){blip(300,0.3,'triangle',0.12,900);},
     finish:function(){var n=[660,880,1100,1320];n.forEach(function(f,i){setTimeout(function(){blip(f,0.3,'square',0.14);},i*130);});}
+  };
+})();
+
+/* =====================================================================
+   MUSIC — streamed mp3 playlist, silent if the files are missing
+   ===================================================================== */
+var MUSIC=[
+  {f:'vice-coast-run.mp3',     t:'VICE COAST RUN'},
+  {f:'neon-heist-run.mp3',     t:'NEON HEIST RUN'},
+  {f:'iron-ring-overdrive.mp3',t:'IRON RING OVERDRIVE'},
+  {f:'black-ice-apex.mp3',     t:'BLACK ICE APEX'},
+  {f:'gasket-thunder.mp3',     t:'GASKET THUNDER'},
+  {f:'jet-fuel-glory.mp3',     t:'JET FUEL GLORY'}
+];
+var MUSIC_DIRS=['music/','neo-velocity/music/'];
+var elNow=document.getElementById('nowplaying');
+var bgm=(function(){
+  var el=new Audio();
+  el.preload='none';el.loop=false;
+  var idx=0,dirI=0,fails=0,on=false,muted=false,VOL=0.55,dead=false;
+  function announce(){
+    if(dead)return;
+    elNow.textContent='\u266A  '+MUSIC[idx].t;
+    elNow.classList.add('on');
+    clearTimeout(announce.h);
+    announce.h=setTimeout(function(){elNow.classList.remove('on');},4500);
+  }
+  function play(){
+    if(dead)return;
+    el.src=MUSIC_DIRS[dirI]+MUSIC[idx].f;
+    var pr=el.play();
+    if(pr&&pr['catch'])pr['catch'](function(){});
+  }
+  el.addEventListener('ended',function(){idx=(idx+1)%MUSIC.length;fails=0;play();announce();});
+  el.addEventListener('playing',function(){fails=0;});
+  el.addEventListener('error',function(){
+    if(!on||dead)return;
+    if(dirI+1<MUSIC_DIRS.length){dirI++;play();return;}   /* same track, other folder */
+    fails++;
+    if(fails>=MUSIC.length){dead=true;elNow.classList.remove('on');return;}
+    idx=(idx+1)%MUSIC.length;play();
+  });
+  return {
+    start:function(){
+      if(on||dead)return;
+      on=true;idx=Math.floor(Math.random()*MUSIC.length);
+      el.volume=muted?0:VOL;play();announce();
+    },
+    next:function(){if(!on||dead)return;idx=(idx+1)%MUSIC.length;fails=0;play();announce();},
+    mute:function(m){muted=m;el.volume=m?0:VOL;},
+    vol:function(d){
+      VOL=clamp(VOL+d,0,1);if(!muted)el.volume=VOL;
+      toast(elToast,'MUSIK '+Math.round(VOL*100)+'%');
+      return VOL;
+    },
+    playing:function(){return on&&!dead&&!el.paused;},
+    title:function(){return dead?'':MUSIC[idx].t;}
   };
 })();
 
@@ -956,14 +1019,17 @@ function keyMap(e,down){
   return true;
 }
 window.addEventListener('keydown',function(e){
-  sfx.unlock();
+  sfx.unlock();bgm.start();
   if(keyMap(e,true)){e.preventDefault();return;}
   var c=e.code||e.key;
   if(c==='KeyR'||c==='r'){if(state==='race'||state==='finish')startRace(selected);}
   if(c==='KeyC'||c==='c'){camMode=(camMode+1)%2;}
   if(c==='KeyP'||c==='p'||c==='Escape'){togglePause();}
   if(c==='KeyQ'||c==='q'){setQuality(!lowQ);}
-  if(c==='KeyM'||c==='m'){sfx.toggle();}
+  if(c==='KeyM'||c==='m'){bgm.mute(sfx.toggle());}
+  if(c==='KeyN'||c==='n'){bgm.next();}
+  if(c==='Minus'||c==='NumpadSubtract'||c==='BracketLeft'){bgm.vol(-0.1);}
+  if(c==='Equal'||c==='NumpadAdd'||c==='BracketRight'){bgm.vol(0.1);}
   if(c==='Enter'||c==='NumpadEnter'){
     if(state==='menu')startRace(selected);
     else if(state==='finish')showMenu();
@@ -995,7 +1061,7 @@ window.addEventListener('blur',function(){K.up=K.down=K.left=K.right=K.shift=K.b
     }
     upd();
   }
-  canvas.addEventListener('touchstart',function(e){sfx.unlock();handle(e,true);},{passive:false});
+  canvas.addEventListener('touchstart',function(e){sfx.unlock();bgm.start();handle(e,true);},{passive:false});
   canvas.addEventListener('touchend',function(e){handle(e,false);},{passive:false});
   canvas.addEventListener('touchcancel',function(e){handle(e,false);},{passive:false});
 })();
@@ -1156,7 +1222,7 @@ function paintCards(){
   var cards=elCards.querySelectorAll('.card');
   for(var k=0;k<cards.length;k++){
     cards[k].addEventListener('click',function(){
-      selected=parseInt(this.getAttribute('data-i'),10);paintCards();setupRace(selected);sfx.unlock();sfx.pad();
+      selected=parseInt(this.getAttribute('data-i'),10);paintCards();setupRace(selected);sfx.unlock();bgm.start();sfx.pad();
     });
   }
   var th='';
@@ -1173,7 +1239,7 @@ function paintCards(){
   for(var m=0;m<tc.length;m++){
     tc[m].addEventListener('click',function(){
       selTrack=parseInt(this.getAttribute('data-i'),10);
-      buildTrack(selTrack);paintCards();setupRace(selected);attractS=0;sfx.unlock();sfx.pad();
+      buildTrack(selTrack);paintCards();setupRace(selected);attractS=0;sfx.unlock();bgm.start();sfx.pad();
     });
   }
 }
@@ -1249,7 +1315,7 @@ function finishRace(){
   elRes.classList.remove('hidden');
   sfx.finish();
 }
-document.getElementById('startbtn').addEventListener('click',function(){sfx.unlock();startRace(selected);});
+document.getElementById('startbtn').addEventListener('click',function(){sfx.unlock();bgm.start();startRace(selected);});
 document.getElementById('againbtn').addEventListener('click',function(){startRace(selected);});
 
 /* =====================================================================
@@ -1333,7 +1399,8 @@ probe:function(cols,rows){
 state:function(){return {state:state,s:player.s,x:player.x,v:player.v,lap:player.lap,
   cam:camera.position.toArray().map(Math.round),ship:player.mesh.position.toArray().map(Math.round),
   look:camLook.toArray().map(Math.round),up:camUp.toArray().map(function(n){return +n.toFixed(2)}),
-  fov:Math.round(camera.fov),energy:Math.round(player.energy),track:trackDef.name,len:Math.round(LEN)};}};
+  fov:Math.round(camera.fov),energy:Math.round(player.energy),track:trackDef.name,len:Math.round(LEN),
+  music:bgm.playing()?bgm.title():'off'};}};
 
 /* boot */
 records=loadRecords();

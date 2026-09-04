@@ -41,6 +41,10 @@ Holding the air brake while sliding into a rival performs a side attack.
 speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, and a fully
 procedural WebAudio engine (no audio assets) whose pitch tracks your speed.
 
+**Soundtrack** — six streamed mp3 tracks in `music/` play as a shuffled, self-advancing
+playlist; the procedural SFX sit under them through a master gain. Swap the files and edit the
+`MUSIC` array to use your own. If the folder is missing the game simply stays on engine sound.
+
 **Records** are stored per track in `localStorage`.
 
 ## Controls
@@ -56,7 +60,9 @@ procedural WebAudio engine (no audio assets) whose pitch tracks your speed.
 | `P` / `Esc` | Pause |
 | `R` | Restart |
 | `Q` | Quality toggle (device pixel ratio) |
-| `M` | Mute |
+| `N` | Next music track |
+| `-` / `+` | Music volume |
+| `M` | Mute everything |
 
 On touch devices: tap the left or right half to steer (throttle is automatic), both sides at
 once to boost.
@@ -75,6 +81,7 @@ Worth knowing if you want to poke at it:
   positions, colours) and it shows up in the menu; `buildTrack(i)` rebuilds and disposes
   the previous geometry.
 - `CFG` — the handling constants (centrifugal scale, banking assist, steering, boost cost).
+- `MUSIC` / `SFX_MASTER` — playlist entries and the sound-effect master gain.
 - `MACHINES` / `RIVALS` — vehicle and AI stats.
 - `window.NV` — a small debug hook left in on purpose:
   `NV.state()` dumps the player/camera state, `NV.step(n)` advances the simulation
