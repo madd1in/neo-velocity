@@ -68,7 +68,8 @@ Holding the air brake while sliding into a rival performs a side attack.
 **Presentation** — a hand-rolled post chain (no addons): the scene renders into a multisampled
 target, a bright pass and two separable Gaussian blurs build the bloom, and the composite adds a
 speed-scaled radial smear of that glow, chromatic stretch, vignette, grain and gamma. Shadow
-mapping follows the player, and the rest is sky shaders, neon rails, ring gates, procedural road
+mapping follows the player, per-theme motes drift around the camera (desert dust, trench embers,
+forest fireflies), boosts and launches punch out a shockwave ring, and the rest is sky shaders, neon rails, ring gates, procedural road
 textures, speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, plus a
 fully procedural WebAudio engine whose pitch tracks your speed. `Q` drops post and shadows for
 weaker GPUs.
