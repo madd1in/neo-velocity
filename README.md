@@ -60,6 +60,12 @@ slipstreaming behind a rival within ~58 units feeds you up to 11 % more speed, a
 throttle in the last half second of the countdown gives a rocket start — too early and the
 engine misfires.
 
+**Combat** — rivals now carry the same power bar you do: they take wall, hazard and attack
+damage, explode when it runs out and respawn, and a kill feed calls it out. Hold the air brake
+into a rival for a side attack, or hit `E` for a spin attack that flings everything within range
+(12 power, 1.6 s cooldown) — the quicker rivals will spin you right back. Every circuit is also
+seeded with hazard drones that cost power and speed; the AI steers around them.
+
 **F-Zero mechanics** — a power bar doubles as health and boost fuel: scraping the rails drains
 it, hitting one hard costs a chunk, zero power destroys the machine (explosion, respawn at 42 %).
 The pit strip recharges you, dash plates fire you forward, and boost costs 20 power.
@@ -69,7 +75,8 @@ Holding the air brake while sliding into a rival performs a side attack.
 target, a bright pass and two separable Gaussian blurs build the bloom, and the composite adds a
 speed-scaled radial smear of that glow, chromatic stretch, vignette, grain and gamma. Shadow
 mapping follows the player, per-theme motes drift around the camera (desert dust, trench embers,
-forest fireflies), boosts and launches punch out a shockwave ring, and the rest is sky shaders, neon rails, ring gates, procedural road
+forest fireflies), every machine drags an additive engine trail, speed lines streak past above
+~62 % of top speed, boosts and launches punch out a shockwave ring, and the rest is sky shaders, neon rails, ring gates, procedural road
 textures, speed-scaled FOV, camera shake, particle sparks, chase and cockpit cameras, plus a
 fully procedural WebAudio engine whose pitch tracks your speed. `Q` drops post and shadows for
 weaker GPUs.
@@ -94,6 +101,7 @@ delta against your standing record lap.
 | `A` `D` / `←` `→` | Steer |
 | `Shift` | Air brake (tightens turns, side attack) |
 | `Space` | Boost (costs power) |
+| `E` | Spin attack |
 | `C` | Chase / cockpit camera |
 | `P` / `Esc` | Pause |
 | `R` | Restart |
