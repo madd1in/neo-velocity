@@ -71,12 +71,12 @@ h1{max-width:100%;font-size:clamp(21px,5.1vw,74px);font-weight:900;letter-spacin
 h2{font-size:11px;letter-spacing:.52em;color:#cfd8e6;opacity:.7;margin-top:-6px;font-weight:600}
 .screen>*{max-width:100%}
   .cards{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;max-width:900px}
-.card{width:min(180px,42vw);padding:8px 11px;cursor:pointer;background:rgba(6,7,14,.78);
+.card{flex:0 1 180px;min-width:132px;max-width:180px;padding:8px 11px;cursor:pointer;background:rgba(6,7,14,.78);
   border:1px solid rgba(120,220,255,.25);clip-path:polygon(0 0,100% 0,100% 86%,88% 100%,0 100%);transition:.18s}
 .card:hover{border-color:rgba(120,220,255,.6);transform:translateY(-3px)}
 .card.sel{border-color:#ffe81f;box-shadow:0 0 26px rgba(255,232,31,.28);background:rgba(38,32,4,.72)}
-.card b{display:block;font-size:15px;letter-spacing:.04em;margin-bottom:1px}
-.card.t{width:min(164px,42vw);padding:7px 10px}
+.card b{display:block;font-size:clamp(12px,1.6vw,15px);letter-spacing:.04em;margin-bottom:1px}
+.card.t{flex:0 1 164px;min-width:126px;max-width:164px;padding:7px 10px}
 .card .rec{font-size:9px;letter-spacing:.14em;color:#8fb6d8;margin-top:8px;border-top:1px solid rgba(255,255,255,.10);padding-top:6px}
 .card .rec b{display:inline;color:#ffe08a;font-size:9px;letter-spacing:.14em}
 .hdr{font-size:10px;letter-spacing:.44em;color:#ffe81f;opacity:.9;margin-bottom:-12px;font-weight:700}
